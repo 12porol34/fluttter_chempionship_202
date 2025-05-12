@@ -1,22 +1,57 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:matule/router.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:matule/core/brand/brand_color.dart';
+import 'package:matule/core/router/router.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: [Locale('ru'), Locale('en')],
+      path: 'assets/localization',
+      fallbackLocale: Locale('en'),
+      child: App(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class App extends StatelessWidget {
+  const App({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Flutter Demo',
+      title: 'Bobik',
+      routerConfig: RouterConfigGo.router,
+
+      debugShowCheckedModeBanner: false,
+      debugShowMaterialGrid: false,
+      showSemanticsDebugger: false,
+
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: GoogleFonts.ralewayTextTheme(),
+
+        scaffoldBackgroundColor: BrandColors.background,
+        platform: TargetPlatform.iOS,
+        primaryColor: BrandColors.accent,
+        colorScheme: ColorScheme.light(primary: BrandColors.accent),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+            TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          },
+        ),
       ),
-      routerConfig: RouterConfigGo().router,
     );
   }
 }
